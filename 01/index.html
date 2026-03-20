@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 윤리와 신뢰성: 편향성 예방과 실무적 대응</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; scroll-behavior: smooth; }
+        .gradient-bg { background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); }
+        .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        /* Modal Styles */
+        #infographic-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        #infographic-modal.active {
+            display: flex;
+        }
+        .modal-content {
+            animation: modalZoom 0.3s ease-out;
+        }
+        @keyframes modalZoom {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Infographic Modal -->
+    <div id="infographic-modal" onclick="closeModal()">
+        <div class="relative max-w-5xl w-full bg-white rounded-2xl p-2 shadow-2xl modal-content" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute -top-12 right-0 text-white text-xl font-bold flex items-center hover:text-yellow-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                닫기
+            </button>
+            <div class="overflow-auto max-h-[85vh] rounded-xl">
+                <img src="unnamed.jpg" alt="인공지능의 두 얼굴: 편향성과 윤리적 딜레마 인포그래픽" class="w-full h-auto block" onerror="this.src='https://via.placeholder.com/1200x800?text=인포그래픽+이미지를+찾을+수+없습니다'">
+            </div>
+            <div class="p-4 bg-gray-50 rounded-b-xl border-t border-gray-100 flex justify-between items-center">
+                <p class="text-sm text-gray-600 font-medium">인공지능 신뢰성 확보를 위한 윤리 가이드 요약</p>
+                <span class="text-xs text-gray-400">출처: [개념 해설서] AI는 정말 중립적일까?</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-20 px-4 text-center shadow-lg relative overflow-hidden">
+        <!-- Decoration circles -->
+        <div class="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-black/10 rounded-full translate-x-1/3 translate-y-1/3"></div>
+
+        <div class="relative z-10">
+            <!-- Navigation Buttons -->
+            <div class="flex justify-center gap-4 mb-8">
+                <!-- 홈 버튼 추가 -->
+                <a href="../index.html" class="inline-flex items-center px-6 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 rounded-full text-sm font-bold transition-all transform hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    홈
+                </a>
+                
+                <button onclick="openModal()" class="inline-flex items-center px-8 py-3 bg-yellow-400 hover:bg-yellow-500 text-blue-900 rounded-full text-base font-bold transition-all transform hover:scale-105 shadow-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    인포그래픽 보기
+                </button>
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">AI는 정말 중립적일까?</h1>
+            <p class="text-xl md:text-2xl opacity-90 max-w-2xl mx-auto font-light leading-relaxed">
+                인공지능의 기계적 중립이라는 함정을 파헤치고,<br>우리가 직면한 윤리적 숙제를 탐구합니다.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-16">
+        
+        <!-- Section 1: AI 편향의 실체 -->
+        <section id="understanding" class="mb-20">
+            <div class="flex items-center mb-10">
+                <div class="w-2 h-10 bg-blue-600 rounded-full mr-4"></div>
+                <h2 class="text-3xl font-bold">1. AI 편향의 실체와 발생 원인</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 7V5a2 2 0 012-2h12a2 2 0 012 2v2M4 7h16M4 7v10a2 2 0 002 2h12a2 2 0 002-2V7M9 21h6" />
+                        </svg>
+                    </div>
+                    <div class="text-blue-600 mb-6 bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">학습 데이터 편향</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        AI가 배우는 <strong>'교과서'</strong>인 데이터 자체에 특정 인종, 성별, 연령대의 불균형이 있을 때 발생합니다. 부족한 데이터는 소수 집단에 대한 부정확한 판단으로 이어집니다.
+                    </p>
+                </div>
+                
+                <div class="card bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </div>
+                    <div class="text-red-600 mb-6 bg-red-50 w-16 h-16 rounded-2xl flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4">알고리즘 편향</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        알고리즘은 마치 <strong>'편애하는 선생님'</strong>과 같습니다. 효율성을 형평성보다 우선시하거나 설계자의 주관이 가중치 설정에 개입될 때 구조적인 불공정이 발생합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: 인간 vs AI 비교 -->
+        <section id="comparison" class="mb-20">
+            <div class="bg-blue-900 rounded-[3rem] p-10 md:p-16 text-white shadow-2xl">
+                <h2 class="text-3xl md:text-4xl font-bold mb-10 text-center">인간의 편향 vs 인공지능의 편향</h2>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-white/20 p-3 rounded-xl mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold mb-2">인간의 편향 (인지적)</h4>
+                                <p class="opacity-80 text-sm leading-relaxed">경험과 교육을 통해 형성되며, 스스로 인지하기 매우 어렵습니다. 수정에는 오랜 교육과 성찰이 필요합니다.</p>
+                            </div>
+                        </div>
+                        <div class="h-px bg-white/10 w-full"></div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-white/20 p-3 rounded-xl mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold mb-2">수정 및 파급력</h4>
+                                <p class="opacity-80 text-sm leading-relaxed">영향력이 개인이나 주변에 국한되지만, 인식의 변화가 매우 점진적입니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-yellow-400/20 p-3 rounded-xl mt-1 text-yellow-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold mb-2 text-yellow-400">인공지능의 편향 (시스템적)</h4>
+                                <p class="opacity-80 text-sm leading-relaxed">데이터의 불균형으로 발생하며, 통계적 분석을 통해 객관적 인지가 가능합니다. 기술적 수정 시 즉각 개선됩니다.</p>
+                            </div>
+                        </div>
+                        <div class="h-px bg-white/10 w-full"></div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-yellow-400/20 p-3 rounded-xl mt-1 text-yellow-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold mb-2 text-yellow-400">수정 및 파급력</h4>
+                                <p class="opacity-80 text-sm leading-relaxed">수정은 빠르지만, 방치할 경우 전 세계 시스템으로 차별이 광범위하고 즉각적으로 확산됩니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: 윤리적 딜레마 -->
+        <section id="dilemma" class="mb-20">
+            <div class="flex items-center mb-10">
+                <div class="w-2 h-10 bg-yellow-500 rounded-full mr-4"></div>
+                <h2 class="text-3xl font-bold">2. 윤리적 딜레마와 사회적 합의</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+                    <h4 class="font-bold text-lg mb-4 text-blue-800">트롤리 딜레마</h4>
+                    <p class="text-gray-600 text-sm mb-4">개입의 직접성에 따라 도덕적 찬성률이 89%에서 11%로 급락합니다.</p>
+                    <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-2">
+                        <div class="bg-blue-600 h-full w-[89%]"></div>
+                    </div>
+                    <div class="flex justify-between text-xs font-bold text-gray-500">
+                        <span>선로 전환 (89%)</span>
+                    </div>
+                </div>
+                <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+                    <h4 class="font-bold text-lg mb-4 text-red-800">문화적 가치 차이</h4>
+                    <p class="text-gray-600 text-sm mb-4">서구권은 어린이를, 동양권은 노인을 우선 보호하는 경향을 보입니다.</p>
+                    <div class="flex gap-2">
+                        <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs rounded-lg">서구: 어린이</span>
+                        <span class="px-3 py-1 bg-red-50 text-red-700 text-xs rounded-lg">동양: 노인</span>
+                    </div>
+                </div>
+                <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+                    <h4 class="font-bold text-lg mb-4 text-purple-800">5대 핵심 질문</h4>
+                    <ul class="text-xs space-y-2 text-gray-500">
+                        <li>• 공정성: 결과가 공정한가?</li>
+                        <li>• 우선순위: 누구의 이익이 먼저인가?</li>
+                        <li>• 결정방법: 어떤 논리로 판단했는가?</li>
+                        <li>• 사회적 합의: 도덕적 합의를 이루었는가?</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="mb-16">
+            <div class="bg-purple-50 rounded-[3rem] p-10 border-2 border-purple-100">
+                <h2 class="text-3xl font-bold mb-8 text-center text-purple-900">자가 점검 퀴즈</h2>
+                <div id="quiz-container">
+                    <div id="quiz-screen">
+                        <div class="mb-8">
+                            <span id="quiz-progress" class="text-purple-600 font-bold text-sm uppercase tracking-widest">Question 1/4</span>
+                            <p id="question-text" class="text-2xl font-bold mt-2 text-gray-800 leading-tight">질문을 불러오는 중...</p>
+                        </div>
+                        <div id="options-container" class="grid gap-4">
+                            <!-- Options go here -->
+                        </div>
+                        <div id="feedback" class="mt-8 p-6 rounded-2xl hidden transform transition-all"></div>
+                        <div class="flex justify-end mt-8">
+                            <button id="next-btn" class="px-10 py-4 bg-purple-600 text-white rounded-2xl font-bold hover:bg-purple-700 shadow-lg shadow-purple-200 transition hidden items-center">
+                                다음 문제
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="result-screen" class="hidden text-center py-10">
+                        <div class="w-32 h-32 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-4">학습을 완료했습니다!</h3>
+                        <p id="score-text" class="text-xl mb-8 text-gray-600"></p>
+                        <button onclick="resetQuiz()" class="px-10 py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition shadow-xl">다시 풀기</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white py-16 px-4 border-t border-gray-100">
+        <div class="max-w-5xl mx-auto text-center">
+            <div class="flex justify-center gap-12 mb-10">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-gray-900 mb-1">89%</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-widest">선로 전환 찬성</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-gray-900 mb-1">230만</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-widest">연구 참여자</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-gray-900 mb-1">XAI</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-widest">설명 가능한 AI</div>
+                </div>
+            </div>
+            <p class="text-gray-400 text-sm">&copy; 2024 AI Ethics Framework. 기술은 인간의 가치를 비추는 거울입니다.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Modal State Control
+        function openModal() {
+            document.getElementById('infographic-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('infographic-modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Quiz Logic
+        const quizData = [
+            {
+                question: "AI가 내리는 '완전한 중립'이 불가능한 본질적 이유는 무엇인가요?",
+                options: ["기계는 감정을 느낄 수 없기 때문", "설계 단계에서 인간의 주관이 개입되기 때문", "컴퓨터 하드웨어의 성능 한계 때문", "인공지능 스스로 자아를 가지기 때문"],
+                correct: 1,
+                rationale: "데이터 선택, 알고리즘 가중치 설정 등 모든 과정에 인간의 가치 판단이 반영되므로 진공 상태의 중립은 불가능합니다."
+            },
+            {
+                question: "인간의 편향과 비교했을 때 AI 편향의 긍정적인 측면은?",
+                options: ["파급력이 작아 위험하지 않다", "수정이 불가능해 일관성이 있다", "객관적 분석을 통해 즉각적 수정이 가능하다", "인간보다 무의식적인 편향이 더 심하다"],
+                correct: 2,
+                rationale: "AI는 데이터와 로직을 기술적으로 수정함으로써 인간보다 훨씬 빠르게 편향을 제거할 수 있습니다."
+            },
+            {
+                question: "트롤리 딜레마 실험에서 찬성률이 89%에서 11%로 변한 결정적 변수는?",
+                options: ["희생되는 사람의 수", "개입 방식의 직접성", "사고 장소의 위험성", "피해자의 사회적 지위"],
+                correct: 1,
+                rationale: "직접적으로 누군가를 해치는 행위(직접 개입)에 대해 인간은 강한 도덕적 거부감을 느낍니다."
+            },
+            {
+                question: "MIT의 연구 결과, 동양권 문화에서 상대적으로 중시된 가치는?",
+                options: ["법규 준수", "어린이 보호", "노인 보호", "운전자의 안전"],
+                correct: 2,
+                rationale: "연구에 따르면 동양권은 서구권에 비해 노인에 대한 보호 우선순위가 상대적으로 높게 나타났습니다."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const qText = document.getElementById('question-text');
+        const qProgress = document.getElementById('quiz-progress');
+        const optContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const scoreText = document.getElementById('score-text');
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            qProgress.innerText = `Question ${currentQuestion + 1}/${quizData.length}`;
+            qText.innerText = q.question;
+            optContainer.innerHTML = '';
+            feedback.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-5 rounded-2xl border-2 border-white hover:border-purple-300 transition-all bg-white font-medium shadow-sm hover:shadow-md";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(index) {
+            const q = quizData[currentQuestion];
+            const buttons = optContainer.querySelectorAll('button');
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.remove('hover:border-purple-300', 'hover:shadow-md');
+            });
+
+            if (index === q.correct) {
+                buttons[index].classList.add('bg-green-50', 'border-green-500', 'text-green-800');
+                feedback.innerHTML = `<div class="font-bold text-lg mb-1">정답입니다! ✨</div><div class="text-sm opacity-90">${q.rationale}</div>`;
+                feedback.className = "mt-8 p-6 rounded-2xl bg-green-500 text-white block shadow-lg animate-bounce-short";
+                score++;
+            } else {
+                buttons[index].classList.add('bg-red-50', 'border-red-500', 'text-red-800');
+                buttons[q.correct].classList.add('bg-green-50', 'border-green-500', 'text-green-800');
+                feedback.innerHTML = `<div class="font-bold text-lg mb-1">틀렸습니다. 💡</div><div class="text-sm opacity-90">${q.rationale}</div>`;
+                feedback.className = "mt-8 p-6 rounded-2xl bg-red-500 text-white block shadow-lg";
+            }
+
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('inline-flex');
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        };
+
+        function showResult() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            scoreText.innerText = `${quizData.length}문제 중 ${score}문제를 정복하셨습니다!`;
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            quizScreen.classList.remove('hidden');
+            resultScreen.classList.add('hidden');
+            loadQuestion();
+        }
+
+        // Initialize on load
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
